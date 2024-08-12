@@ -1,0 +1,76 @@
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="height:80px;"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Send the form on enter keypress and avoid if shift is pressed
+        $('#prompt').keypress(function(event) {
+            if (event.keyCode === 13 && !event.shiftKey) {
+                event.preventDefault();
+                $('form').submit();
+            }
+        });
+
+        $('form').on('submit', function(event) {
+            event.preventDefault();
+            // get the CSRF token from the cookie
+            var csrftoken = Cookies.get('csrftoken');
+
+            // set the CSRF token in the AJAX headers
+            $.ajaxSetup({
+                headers: { 'X-CSRFToken': csrftoken }
+            });
+
+            // Get the prompt
+            var prompt = $('#prompt').val();
+            var dateTime = new Date();
+            var time = dateTime.toLocaleTimeString();
+
+            // Add the prompt to the response div
+            $('#response').append('<p>(' + time + ') <i class="bi bi-person"></i>: ' + prompt + '</p>');
+
+            // Clear the prompt
+            $('#prompt').val('');
+
+            $.ajax({
+                url: '/query_view/',
+                type: 'POST',
+                data: { prompt: prompt },
+                dataType: 'json',
+                success: function(data) {
+                    var responseTime = new Date().toLocaleTimeString();
+                    $('#response').append('<p>(' + responseTime + ') <i class="bi bi-robot"></i>: ' + data.response + '</p>');
+                },
+                error: function(xhr, status, error) {
+                    var responseTime = new Date().toLocaleTimeString();
+                    $('#response').append('<p>(' + responseTime + ') <i class="bi bi-robot"></i>: Error: ' + xhr.responseText + '</p>');
+                }
+            });
+        });
+    });
+</script>
+
+<div class="container p-3">
+    <h3>환자식 Quick 추천</h3>
+    <div class="mb-3">
+        <form method="post">
+            {% csrf_token %}
+            <label for="prompt" class="form-label"><strong>Prompt: </strong></label>
+            <textarea class="form-control" id="prompt" name="prompt" rows="3"></textarea>
+            <br>
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+    </div>
+    <br>
+    <div class="mb-3">
+        <h6>Response:</h6>
+        <div class="container border overflow-auto h-50" id="response"></div>
+    </div>
+</div>
+{% endblock %}

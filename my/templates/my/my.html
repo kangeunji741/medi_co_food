@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .main-btn-con {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .btn-con {
+        background-color: #2ECC71;
+        color: #000000;
+        width: 100px;
+        height: 40px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 10px;
+    }
+    .post-card-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-top: 20px;
+    }
+    .post-card {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 10px;
+    }
+    .post-card img {
+        max-width: 100%;
+        height: auto;
+        max-height: 200px;
+    }
+    .post-card img:hover {
+        transform: scale(1.2); /* 이미지 크기 확대 */
+        opacity: 0.8; /* 반투명 상태로 만듦 */
+        transition: transform 0.3s ease, opacity 0.3s ease; /* 부드러운 전환 효과 추가 */
+    }
+    .profile-container {
+        display: flex;
+        align-items: center;
+        background-color: #FFEB85;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+    }
+    .profile-info {
+        flex: 1;
+    }
+    .profile-info h2 {
+        margin: 0;
+        font-size: 1.5em;
+    }
+    .profile-info p {
+        margin: 10px 0;
+        color: #333;
+    }
+    .logout-button {
+        display: inline-block;
+        background-color: #ccc;
+        color: black;
+        padding: 10px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 1em;
+    }
+    .profile-avatar {
+        display: block;
+        width: 60px;
+        height: 60px;
+        background-image: url('/path/to/avatar.png');
+        background-size: cover;
+        border-radius: 50%;
+        margin-left: 20px;
+    }
+    .links-container {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+    }
+    .link {
+        display: block;
+        width: 100px;
+        text-align: center;
+        padding: 10px 0;
+        background-color: #E3FCEC;
+        border-radius: 10px;
+        text-decoration: none;
+        color: black;
+        font-size: 1.2em;
+    }
+    #dynamic-content {
+        margin-top: 20px;
+    }
+    .loading img {
+        width: 60vh;
+        height: 60vh;
+        margin-top: -20px;
+        margin-left: 20px;
+    }
+</style>
+<div style="height: 80px;"></div>
+
+{% if user.is_authenticated %}
+    <div class="profile-container">
+        <div class="profile-info">
+            <h2>{{ user.username }}님 안녕하세요!</h2>
+            <p>{{ user.email }}</p>
+            <img src="" alt="" id="profile_Image" />
+            <a href="/accounts/logout" class="logout-button">로그아웃</a>
+        </div>
+        <a href="/accounts/my/{{ user.id }}" class="profile-avatar"></a>
+    </div>
+
+    <div class="main-btn-con">
+        <div class="btn-con">
+            <a href="#" id="my-posts-btn2">
+                <b>관심 상품</b>
+            </a>
+        </div>
+        <div class="btn-con">
+            <a href="#" id="my-posts-btn">
+                <b>내 글 보기</b>
+            </a>
+        </div>
+    </div>
+    <div id="post-count" style="margin-top: 20px;"></div>
+    <div class="loading"><img src="{% static 'mainlo.gif' %}" alt="메인로고"></div>
+    <div id="dynamic-content" class="post-card-container"></div>
+{% else %}
+    <p>로그인을 해주세요.</p>
+{% endif %}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+function serializeProducts(products) {
+    return JSON.stringify(products);
+}
+
+$(document).ready(function() {
+    $('#my-posts-btn').click(function(event) {
+        event.preventDefault();
+        $('.loading').show();
+        $.ajax({
+            url: '/my/my_posts',
+            type: 'GET',
+            success: function(response) {
+                var posts = response.posts;
+                var content = '';
+                var cnt2 = 0;
+                for (var i = 0; i < posts.length; i++) {
+                    content += '<div class="post-card">';
+                    cnt2++;
+                    if (posts[i].cate === "일상 공유") {
+                        content += '<p class="smallp"><b>' + posts[i].cate + '</b><span style="font-size: 15px;">❤️</span></p>';
+                    } else if (posts[i].cate === "레시피 공유") {
+                        content += '<p class="smallp"><b>' + posts[i].cate + '</b><span style="font-size: 15px;">🍳</span></p>';
+                    }
+                    if (posts[i].file_url) {
+                        content += '<div style="margin-left:10px;"><img src="' + posts[i].file_url + '" alt="이미지" style="width:auto%; height:200px;"></div>';
+                    }
+                    content += '<p style="margin-left:10px;"><b>' + posts[i].title + '</b></p>';
+                    content += '<p class="smallp" style="font-size:10px;">' + posts[i].board_date + '<b> [' + '{{ user.username }}' + ']</b></p>';
+                    content += '<p class="smallp">' + posts[i].content + '</p>';
+                    content += '</div>';
+                }
+                $('#dynamic-content').html(content);
+                $('#post-count').html('{{ user.username }}' + '님의 게시물 개수는 ' + cnt2 + '개 입니다');
+                $('.loading').hide();
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX request failed:', status, error);
+                $('.loading').hide();
+            }
+        });
+    });
+
+    $('#my-posts-btn2').click(function(event) {
+        event.preventDefault();
+        $('.loading').show();
+        $.ajax({
+            url: '/my/my_liked_products/',
+            type: 'GET',
+            success: function(response) {
+                var products = response.products;
+                var content = '';
+                var cnt = 0;
+                for (var i = 0; i < products.length; i++) {
+                    content += '<div class="post-card">';
+                    cnt++;
+                    content += '<p>' + products[i].product_name + '</p>';
+                    content += '<a href="/main/product_detail/' + products[i].product_id + '"><img src="' + products[i].image_url + '" alt="' + products[i].product_name + '"></a>';
+                    content += '</div>';
+                }
+                $('#dynamic-content').html(content);
+                $('#post-count').html('{{ user.username }}' + '님의 좋아요 개수는 ' + cnt + '개 입니다');
+                $('.loading').hide();
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX request failed:', status, error);
+                $('.loading').hide();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

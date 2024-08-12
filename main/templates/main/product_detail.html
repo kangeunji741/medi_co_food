@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="height: 100px;"></div>
+
+<style>
+    .product-image {
+        display: block;
+        width: 300px;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    .name {
+        font-size: 20px;
+        margin-top: 10px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .avg_score {
+        font-size: 24px;
+        margin-top: 10px;
+    }
+
+    .recommend {
+        font-size: 14px;
+        text-align: center;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        height: 100px;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 0px;
+        text-align: center;
+        font-size: 14px;
+        height: 30px;
+    }
+
+    th:first-child, td:nth-child(3),
+    td:first-child {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    td:first-child, td:nth-child(3) {
+        font-size: 14px;
+        background-color: #e9ecef;
+    }
+
+    .nutrient {
+        width: 100%;
+        height: 100px;
+        display: plex;
+    }
+
+    tr:nth-child(1) > th {
+        text-align: right;
+        font-size: 13px;
+        padding-right: 20px;
+        border: none;
+    }
+    .box1 { 
+        color: black;
+        text-align:center;
+    }
+
+</style>
+
+<a href="{{product.site_url}}" class="box1">
+    <img src="{{product.image_url}}" class="product-image">
+    <p >해당 제품 사이트로 이동 ▶️</p>
+</a>
+
+<div class="like-container">
+    <button class="like-button" data-product-id="{{ product.product_id }}">
+        {% if user.is_authenticated %}
+            {% if is_liked %}
+                좋아요 취소
+            {% else %}
+                좋아요
+            {% endif %}
+        {% else %}
+            좋아요
+        {% endif %}
+    </button>
+</div>
+
+<div class="name-container">
+    <p class="name">
+        <span class="heart-icon">
+            {% if is_liked %}
+                ❤️
+            {% else %}
+                🖤
+            {% endif %}
+        </span>
+        [{{ product.patient_category }}] {{ product.product_name }}
+    </p>
+</div>
+
+<canvas id="myChart" width="400" height="200"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script>
+    {% if product.patient_category == '당뇨' %}
+    let myCt = document.getElementById('myChart');
+    let myChart = new Chart(myCt, {
+        type: 'bar',
+        options: {
+            indexAxis: 'y',
+            plugins: {
+                subtitle: {
+                    display: true,
+                    text: '[당뇨환자를 위한 당 함량 기준 표(g)]'
+                }
+            }
+        },
+        data: {
+            labels: ['당 권장 섭취량', '해당상품', '당사 평균'],
+            datasets: [
+                {
+                    label: '65kg 성인 한끼 기준',
+                    data: [3.33, {{ product.sugars }}, {{ avg_sugars|default:0 }}],
+                    backgroundColor: ['#ccfcfc', '#2ecc71', '#ccfcfc'],
+                    borderColor: 'white',
+                    maxBarThickness: 30
+                }
+            ]
+        },
+    });
+    {% endif %}
+
+    {% if product.patient_category == '신장질환' %}
+    let myCt = document.getElementById('myChart');
+    let myChart = new Chart(myCt, {
+        type: 'bar',
+        options: {
+            indexAxis: 'y',
+            plugins: {
+                subtitle: {
+                    display: true,
+                    text: '신장질환자를 위한 나트륨 기준 표(mg)'
+                }
+            }
+        },
+        data: {
+            labels: ['나트륨 권장 섭취량', '해당상품', '당사 평균'],
+            datasets: [
+                {
+                    label: '65kg 성인 한끼 기준',
+                    data: [266, {{ product.na }}, {{ avg_na|default:0 }}],
+                    backgroundColor: ['#ccfcfc', '#2ecc71', '#ccfcfc'],
+                    borderColor: 'white',
+                    borderWidth: 2,
+                    maxBarThickness: 30
+                }
+            ]
+        },
+    });
+    {% endif %}
+
+    {% if product.patient_category == '암질환' %}
+    let myCt = document.getElementById('myChart');
+    let myChart = new Chart(myCt, {
+        type: 'bar',
+        options: {
+            indexAxis: 'y',
+            plugins: {
+                subtitle: {
+                    display: true,
+                    text: '암 질환자를 위한 단백질 기준표(kcal)'
+                }
+            }
+        },
+        data: {
+            labels: ['단백질 유래열량 최소기준치 ', '해당 상품', '당사 평균'],
+            datasets: [
+                {
+                    label: '암질환자를 위한 단백질 기준표(kcal)',
+                    data: [{{product.calorie}} * 0.18 , {{product.protein}} * 4 , {{ avg_protein|default:0 }}], // 단백질은 1g당 4kcal (유래열량), 기준치 열량의 18% 이상 ( 칼로리 * 0.18 )
+                    backgroundColor: ['#ccfcfc', '#2ecc71', '#ccfcfc'],
+                    borderColor: 'white',
+                    borderWidth: 2,
+                    maxBarThickness: 30
+                }
+            ]
+        },
+    });
+    {% endif %}
+</script>
+
+{% if product.patient_category == '당뇨' %}
+    <p class="recommend">당뇨환자가 유의해야 할 영양성분은 <b>'당'</b> 입니다</p>
+{% endif %}
+
+{% if product.patient_category == '신장질환' %}
+    <p class="recommend">신장질환자가 유의해야 할 영양성분은 <b>'나트륨'</b> 입니다 </p>
+{% endif %}
+
+{% if product.patient_category == '암질환' %}
+    <p class="recommend">암질환자가 유의해야 할 영양성분은 <b>'단백질'</b> 입니다 </p>
+{% endif %}
+
+<div class="nutrient">
+    <table>
+        <tbody>
+            <tr>
+                <th colspan="2" style="text-align:left;">
+                    영양성분표
+                </th>
+                <th colspan="2">
+                    (100g기준)
+                </th>
+            </tr>
+            <tr>
+                <td>열량</td>
+                <td>{{ product.calorie }} (kcal)</td>
+                <td>탄수화물</td>
+                <td>{{ product.carbohydrate }} (g)</td>
+            </tr>
+            <tr>
+                <td>단백질</td>
+                <td>{{ product.protein }} (g)</td>
+                <td>지방</td>
+                <td>{{ product.fat }} (g)</td>
+            </tr>
+            <tr>
+                <td>당</td>
+                <td>{{ product.sugars }} (g)</td>
+                <td>나트륨</td>
+                <td>{{ product.na }} (mg)</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.like-button').click(function() {
+            var button = $(this);
+            var productId = button.data('product-id');
+
+            $.ajax({
+                url: '/main/product/' + productId + '/like/',
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (button.text() === '좋아요') {
+                        button.text('좋아요 취소');
+                        $('.heart-icon').text('❤️');
+                    } else {
+                        button.text('좋아요');
+                        $('.heart-icon').text('🖤');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('좋아요 토글 에러:', error);
+                }
+            });
+        });
+    });
+</script>
+<div style="height: 80px;"></div>
+
+{% endblock %}
+
+
+
+수정사항 2. view 일부 product_detail
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, product_id=product_id)
+    is_liked = False
+
+    if request.user.is_authenticated:
+        is_liked = Like.objects.filter(user=request.user, product=product).exists()
+    diabetes_products = Product.objects.filter(patient_category='당뇨')
+    total_sugars = sum([p.sugars for p in diabetes_products])
+    diabetes_count = diabetes_products.count()
+    avg_sugars = total_sugars / diabetes_count if diabetes_count > 0 else 0
+
+    kidney_products = Product.objects.filter(patient_category='신장질환')
+    total_na = sum([p.na for p in kidney_products])
+    kidney_count = kidney_products.count()
+    avg_na = total_na / kidney_count if kidney_count > 0 else 0
+
+    cancer_products = Product.objects.filter(patient_category='암질환')
+    total_protein = sum([p.protein for p in cancer_products])
+    cancer_count = cancer_products.count()
+    avg_protein = total_protein / cancer_count if cancer_count > 0 else 0
+
+    
+
+    return render(request, "main/product_detail.html", {
+        'product': product,
+        'avg_sugars': avg_sugars,
+        'avg_na': avg_na,
+        'avg_protein': avg_protein,
+        'is_liked':is_liked
+    })
+

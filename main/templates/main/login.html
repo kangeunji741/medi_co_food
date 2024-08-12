@@ -1,0 +1,70 @@
+
+{% load static %}
+{% load socialaccount %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loading Page</title>
+    <style>
+        html {
+            min-width: 420px;
+            width: 30%;
+            margin-inline-start: 33%;
+        }
+        /* 로딩 페이지 스타일 */
+        body {
+            margin: 0;
+            height: 100vh; /* 화면 높이 전체를 차지하도록 설정 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+        }
+
+        .loading-container {
+            width: 30%;
+            min-width: 420px;
+            height: 720px;
+            background-color: #fffefc;
+            display: flex;
+            flex-direction: column; /* Display child elements in a column */
+            align-items: center;
+            margin-top: 20px; /* 로딩 이미지와 로그인 이미지 사이에 간격을 줍니다. */
+            
+        }
+
+        .loading img {
+            width: 40vh;
+            height: 40vh;
+            padding: 60px;
+            margin-top: 30px;
+        }
+
+        .login img {
+            width: 35vh;
+            height: 6vh;
+            padding: 10px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="loading-container">
+        <div class="loading"><img src="{% static 'mainlo.gif' %}" alt="메인로고"></div>
+        <div class="login">
+            <a href="{% provider_login_url 'kakao' %}">
+                <img src="{% static 'kakaologin.png' %}" alt="카카오 로그인">
+            </a>
+        </div>
+        <div class="login">
+            <a href="{% provider_login_url 'naver' %}">
+                <img src="{% static 'naverlogin.png' %}" alt="네이버 로그인">
+            </a>
+        </div>
+        </form>
+    </div>
+
+</body>
+</html>

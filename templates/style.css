@@ -1,0 +1,63 @@
+        /*전체적으로 가운데 정렬하기 위하여 사용 전체 100% 중 
+        50%만 사용하고 시작점을 화면의 25%부터 시작함*/
+        html {
+            min-width: 420px;
+            width: 30%;
+            margin-inline-start: 33%;
+        }
+        body{
+            margin: 0%;
+            border:1px solid black;
+        }
+        /*최소한 800px을 보이게 함. 하단의 메뉴바가 끌어 올라오지 않도록*/
+        div.main_content {
+           
+            min-height: 800px;
+        }
+        div.loading-container {
+            min-height:690PX;
+        }
+
+        /* 모든 a테그에 대하여 클릭 시 색이 변하거나 밑줄이 생기지 않도록*/
+        a {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        /*하단 메뉴바의 크기 조절 및 고정 시키기*/
+        .menu_bar {
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 30%;
+            min-width: 420px;
+            height: 80px;
+            /* 메뉴 바의 높이 지정 */
+            background-color: #f8f9fa;
+            /* 메뉴 바 배경색 */
+            display: flex;
+            justify-content: space-around;
+            /* 아이콘 간격 조절 */
+            align-items: center;
+            /* 수직 중앙 정렬 */
+        }
+
+        .logo_bar {
+            text-align: center;
+            position: fixed;
+            top: 0;
+            width: 30%;
+            min-width: 420px;
+            height: 80px;
+            /* 메뉴 바의 높이 지정 */
+            background-color: #f8f9fa;
+            /* 메뉴 바 배경색 */
+            display: flex;
+            justify-content: space-around;
+            /* 아이콘 간격 조절 */
+            align-items: center;
+            /* 수직 중앙 정렬 */
+        }

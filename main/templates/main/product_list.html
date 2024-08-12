@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+<head>
+    <style>
+        .tiles {
+            display: -moz-flex;
+            display: -webkit-flex;
+            display: -ms-flex;
+            display: flex;
+            -moz-flex-wrap: wrap;
+            -webkit-flex-wrap: wrap;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            position: relative;
+            margin: -2.5em 0 0 -2.5em;
+        }
+        .tiles article {
+            -moz-transition: -moz-transform 0.5s ease, opacity 0.5s ease;
+            -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+            -ms-transition: -ms-transform 0.5s ease, opacity 0.5s ease;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            position: relative;
+            width: calc(33.33333% - 2.5em);
+            margin: 2.5em 0 0 2.5em;
+        }
+        .tiles article > .image {
+            -moz-transition: -moz-transform 0.5s ease;
+            -webkit-transition: -webkit-transform 0.5s ease;
+            -ms-transition: -ms-transform 0.5s ease;
+            transition: transform 0.5s ease;
+            position: relative;
+            display: block;
+            width: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .tiles article > .image img {
+            display: block;
+            width: 100%;
+        }
+        .tiles article > .image:before {
+            pointer-events: none;
+            -moz-transition: background-color 0.5s ease, opacity 0.5s ease;
+            -webkit-transition: background-color 0.5s ease, opacity 0.5s ease;
+            -ms-transition: background-color 0.5s ease, opacity 0.5s ease;
+            transition: background-color 0.5s ease, opacity 0.5s ease;
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 1.0;
+            z-index: 1;
+            opacity: 0.8;
+        }
+        .tiles article > .image:after {
+            pointer-events: none;
+            -moz-transition: opacity 0.5s ease;
+            -webkit-transition: opacity 0.5s ease;
+            -ms-transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease;
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cstyle%3Eline %7B stroke-width: 0.25px%3B stroke: %23ffffff%3B %7D%3C/style%3E%3Cline x1='0' y1='0' x2='100' y2='100' /%3E%3Cline x1='100' y1='0' x2='0' y2='100' /%3E%3C/svg%3E");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            opacity: 0.25;
+            z-index: 2;
+        }
+        .tiles article > a {
+            display: -moz-flex;
+            display: -webkit-flex;
+            display: -ms-flex;
+            display: flex;
+            -moz-flex-direction: column;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -moz-align-items: center;
+            -webkit-align-items: center;
+            -ms-align-items: center;
+            align-items: center;
+            -moz-justify-content: center;
+            -webkit-justify-content: center;
+            -ms-justify-content: center;
+            justify-content: center;
+            -moz-transition: background-color 0.5s ease, -moz-transform 0.5s ease;
+            -webkit-transition: background-color 0.5s ease, -webkit-transform 0.5s ease;
+            -ms-transition: background-color 0.5s ease, -ms-transform 0.5s ease;
+            transition: background-color 0.5s ease, transform 0.5s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 1em;
+            border-radius: 4px;
+            border-bottom: 0;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            z-index: 3;
+        }
+        .tiles article > a > :last-child {
+            margin: 0;
+        }
+        .tiles article > a:hover {
+            color: #ffffff !important;
+        }
+        .tiles article > a h2 {
+            margin: 0;
+        }
+        .tiles article > a .content {
+            -moz-transition: max-height 0.5s ease, opacity 0.5s ease;
+            -webkit-transition: max-height 0.5s ease, opacity 0.5s ease;
+            -ms-transition: max-height 0.5s ease, opacity 0.5s ease;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+            width: 100%;
+            max-height: 0;
+            line-height: 1.5;
+            margin-top: 0.35em;
+            opacity: 0;
+        }
+        .tiles article > a .content > :last-child {
+            margin-bottom: 0;
+        }
+        .tiles article.style1 > .image:before {}
+        body:not(.is-touch) .tiles article:hover > .image {
+            -moz-transform: scale(1.1);
+            -webkit-transform: scale(1.1);
+            -ms-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+        body:not(.is-touch) .tiles article:hover > .image:before {
+            background-color: #333333;
+            opacity: 0.35;
+        }
+        body:not(.is-touch) .tiles article:hover > .image:after {
+            opacity: 0;
+        }
+        body:not(.is-touch) .tiles article:hover .content {
+            max-height: 15em;
+            opacity: 1;
+        }
+        * + .tiles {
+            margin-top: 2em;
+        }
+        body.is-preload .tiles article {
+            -moz-transform: scale(0.9);
+            -webkit-transform: scale(0.9);
+            -ms-transform: scale(0.9);
+            transform: scale(0.9);
+            opacity: 0;
+        }
+        body.is-touch .tiles article .content {
+            max-height: 15em;
+            opacity: 1;
+        }
+        @media screen and (max-width: 2160px) {
+            .tiles {
+                margin: -2.5em 0 0 -2.5em;
+            }
+            .tiles article {
+                width: calc(50% - 2.5em);
+                margin: 2.5em 0 0 2.5em;
+            }
+        }
+        @media screen and (max-width: 736px) {
+            .tiles {
+                margin: -1.25em 0 0 -1.25em;
+            }
+            .tiles article {
+                width: calc(50% - 1.25em);
+                margin: 1.25em 0 0 1.25em;
+            }
+            .tiles article:hover > .image {
+                -moz-transform: scale(1.0);
+                -webkit-transform: scale(1.0);
+                -ms-transform: scale(1.0);
+                transform: scale(1.0);
+            }
+        }
+        @media screen and (max-width: 480px) {
+            .tiles {
+                margin: 0;
+            }
+            .tiles article {
+                width: 100%;
+                margin: 1.25em 0 0 0;
+            }
+        }
+        a>img {
+            height: auto;
+            width: 80px;
+        }
+        .div {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .tiles article p {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            height: 3em;
+        }
+        #price {
+            text-align: right;
+            font-weight: bold;
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        #manu {
+            font-size: 11px;
+            font-weight: bold;
+            height: 15px;
+        }
+        #jipyo {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        hr {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div style="height:80px;"></div>
+
+    <!-- 검색-->
+    <div style="padding:10px; text-align:center;">
+        <form method="post" action="{% url 'product_search' %}" class="form-inline d-inline-flex">
+            {% csrf_token %}
+            <input id="searchin" class="form-control mr-sm-2" type="search" aria-label="Search" name="q" value="{{q}}">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </form>
+    </div>
+
+    <div style="height:80px;" class="div">
+        <a id="diabetes" onclick="toggleFilter(2)" href="#">
+            <img src="{% static 'dang2.png' %}">
+        </a>
+        <a id="kidney" href="#" onclick="toggleFilter(3)">
+            <img src="{% static 'cinjang2.png' %}">
+        </a>
+        <a id="cancer" href="#" onclick="toggleFilter(4)">
+            <img src="{% static 'cancer2.png' %}">
+        </a>
+    </div>
+    <hr>
+    <span id="article" style="font-weight: bold;"><전체보기></span>
+    <section id="product-list" class="tiles">
+        {% for product in productList %}
+        <article class="style1" data-dcate="{{ product.dcate_id }}">
+            <span class="image">
+                <img src="{{ product.image_url }}" alt="{{ product.product_name }}" height="200px" width="200px">
+                <span id="manu">[{{ product.manufacturer }}]</span>
+                <p id="pName" style="font-weight: bold;">{{ product.product_name }}</p>
+                <span style="display: block;" id="price">{{ product.price|intcomma }}원</span>
+                <p id="jipyo">
+                    {% if product.patient_category == '당뇨' %}
+                        당 함량: {{ product.sugars }}g
+                    {% elif product.patient_category == '신장질환' %}
+                        열량(100g당): {{ product.calorie }}kcal
+                    {% elif product.patient_category == '암질환' %}
+                        단백질 함량: {{ product.protein }}g
+                    {% endif %}
+                </p>
+            </span>
+            <a href="{% url 'product_detail' product.product_id %}">
+                <h2></h2>
+                <div class="content">
+                    <p>상세 정보 확인하기!</p>
+                </div>
+            </a>
+            <!-- 좋아요 버튼 추가 -->
+            <div class="like-container" style="text-align: center; margin-top: 10px;">
+                <button class="like-btn" data-product-id="{{ product.product_id }}" onclick="handleLike(this)">
+                    ❤️ 좋아요 (<span class="like-count">{{ product.like_set.count }}</span>)
+                </button>
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+    <script>
+        
+        console.log("loading..." , {{ p_id }});
+
+        window.onload = function () {
+          toggleFilter({{ p_id }});
+        };
+
+
+        let currentFilter = 0;
+        function toggleFilter(dcate) {
+            if (currentFilter === dcate) {
+                currentFilter = 0;  // 전체 보기로 돌아가기
+            } else {
+                currentFilter = dcate;  // 선택한 카테고리로 필터링
+            }
+            filterProducts(currentFilter);
+        }
+        function filterProducts(dcate) {
+            const articles = document.querySelectorAll('.tiles article');
+            const articleLabel = document.getElementById("article");
+            if (dcate === 2) {
+                articleLabel.innerText = "<당뇨식>";
+            } else if (dcate === 3) {
+                articleLabel.innerText = "<신장질환>";
+            } else if (dcate === 4) {
+                articleLabel.innerText = "<암환자>";
+            } else {
+                articleLabel.innerText = "<전체보기>";
+            }
+            articles.forEach(article => {
+                if (dcate === 0 || parseInt(article.getAttribute('data-dcate')) === dcate) {
+                    article.style.display = 'block';
+                } else {
+                    article.style.display = 'none';
+                }
+            });
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            filterProducts(0);
+        });
+        function handleLike(button) {
+            const productId = button.getAttribute('data-product-id');
+            fetch(`/toggle_like/${productId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ product_id: productId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const likeCount = button.querySelector('.like-count');
+                    likeCount.textContent = data.likes;
+                    button.classList.toggle('liked', data.liked);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+    <div style="height:80px;"></div>
+</body>
+{% endblock %}

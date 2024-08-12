@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    form {
+        display: flex;
+        justify-content: center; /* Center the form horizontally */
+    }
+    table {
+        margin: 10px;
+    }
+    th, td {
+        align-items: center;
+        margin-top: 10px;
+    }
+    tr {
+        margin: 10px 0; /* Add vertical margin between rows */
+    }
+    textarea {
+        width: 400px; /* Set width of the textarea */
+        display: block;
+        margin: 0 auto; /* Center align the textarea */
+    }
+    button {
+        display: block;
+        margin: 20px auto 0; /* 버튼을 중앙 정렬하고 상단 여백 추가 */
+        background-color: #2ECC71; /* 버튼 배경색 설정 */
+        color: #ffffff; /* 버튼 글자색 설정 */
+        width: 100px;
+        height: 40px;
+        border: none; /* 버튼 테두리 없애기 */
+        border-radius: 10px; /* 버튼 테두리 둥글게 만들기 */
+        cursor: pointer; /* 마우스 커서가 버튼 위에 있을 때 포인터로 변경 */
+    }
+    button:hover {
+        background-color: #28B463; /* 버튼에 마우스를 올렸을 때 배경색 변경 */
+    }
+    input{
+        margin-top:10px;
+
+    }
+    .btn-con {
+        background-color:#2ECC71;
+        color: #000000;
+        width:100px;
+        height:40px;
+        display: flex;
+        justify-content: space-around;
+        /* 아이콘 간격 조절 */
+        align-items: center;
+        /* 수직 중앙 정렬 */
+        border-radius: 10px;
+    }
+    .btn-con a {
+        display: flex; /* 추가: 링크 안의 내용을 Flexbox로 처리 */
+        justify-content: center; /* 추가: 가로 중앙 정렬 */
+        align-items: center; /* 추가: 세로 중앙 정렬 */
+        width: 100%; /* 추가: 링크가 btn-con의 전체 너비를 차지하도록 설정 */
+        height: 100%; /* 추가: 링크가 btn-con의 전체 높이를 차지하도록 설정 */
+        text-decoration: none; /* 선택: 링크의 기본 밑줄 제거 */
+    }
+    .full-box {
+        display: flex;
+        width: 460px;
+        height: 40px;
+        background-color: #fffefc;
+        position: fixed;
+        bottom: 65px;
+        z-index: 999;
+        text-align: center;
+        align-items: center;
+        justify-content: center; /* 추가: 부모 요소의 내용을 가로로 중앙 정렬 */
+    }
+</style>
+
+<div style="height:90px;"></div>
+<form method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    <table>
+        <thead>
+        <tr>
+            <th>제목</th>
+            <td><input type="text" name="title" placeholder="제목" value="{{ title }}"></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th>카테고리</th>
+            <td>
+                <select name="cate">
+                    <option value="일상 공유" name="life" {% if cate == "일상 공유" %}selected{% endif %}>일상 공유</option>
+                    <option value="레시피 공유" name="recipe" {% if cate == "레시피 공유" %}selected{% endif %}>레시피 공유</option>
+                </select>
+            </td>
+            
+        </tr>
+        <tr>
+            <td colspan="2">
+                <textarea name="content" placeholder="내용" cols="53" rows="10"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <th>첨부파일</th>
+            <td><input type="file" class="form-control" name="file" id="file" placeholder="파일"></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                {% if error_message %}
+                <p style="color:red;">{{ error_message }}</p>
+            {% endif %}
+                <button type="submit">등록</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</form>
+<div class="full-box">
+    <div class="btn-con">
+        <a href="{% url 'board' %}">
+            <b>목록</b>
+        </a>
+    </div>
+</div>
+{% endblock %}

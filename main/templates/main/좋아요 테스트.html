@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Product List</h1>
+    <ul>
+        {% for product in products %}
+        <li>
+            <h2>{{ product.product_name }}</h2>
+            <p>Price: {{ product.price }}</p>
+            <p>{{ product.manufacturer }}</p>
+            <button class="like-button" data-product-id="{{ product.id }}">
+                {% if user.is_authenticated and product.like_set.filter(user=user).exists %}
+                    Unlike
+                {% else %}
+                    Like
+                {% endif %}
+            </button>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        $(document).ready(function() {
+            $('.like-button').click(function() {
+                var button = $(this);
+                var productId = button.data('product-id');
+
+                $.ajax({
+                    url: '/product/' + productId + '/like/',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (button.text() === 'Like') {
+                            button.text('Unlike');
+                        } else {
+                            button.text('Like');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error toggling like:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

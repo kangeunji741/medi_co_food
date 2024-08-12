@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+        $(function(){
+          // 마지막 슬라이드를 첫 번째 슬라이드 앞에 위치
+          $('.slide > ul > li:last-child').insertBefore('.slide > ul > li:first-child');
+          $('.slide > ul').css('margin-left', '-100%');
+      
+          // 왼쪽으로 한 칸 이동하는 함수
+          function moveLeft(){
+            $('.slide > ul').animate({'margin-left': '-200%'}, 500, function(){
+              $('.slide > ul > li:first-child').insertAfter('.slide > ul > li:last-child');
+              $('.slide > ul').css('margin-left', '-100%');
+            });
+          }
+      
+          // 오른쪽으로 한 칸 이동하는 함수
+          function moveRight(){
+            $('.slide > ul').animate({'margin-left': '0'}, 500, function(){
+              $('.slide > ul > li:last-child').insertBefore('.slide > ul > li:first-child');
+              $('.slide > ul').css('margin-left', '-100%');
+            });
+          }
+      
+          // 3초마다 왼쪽으로 자동 슬라이드
+          let Timer = setInterval(moveLeft, 3000);
+      
+          // 좌우 버튼 클릭 시 슬라이드 이동
+          $('.slide i.fa-angle-left').click(function(){
+            moveLeft();
+          });
+      
+          $('.slide i.fa-angle-right').click(function(){
+            moveRight();
+          });
+      
+          // 슬라이드 버튼에 마우스 오버 시 자동 슬라이드 멈춤
+          $('.slide i.fas').mouseenter(function(){
+            clearInterval(Timer);
+          });
+      
+          // 슬라이드 버튼에 마우스 아웃 시 자동 슬라이드 재개
+          $('.slide i.fas').mouseleave(function(){
+            Timer = setInterval(moveLeft, 3000);
+          });
+        });
+      </script>
+</head>
+<style>
+    .main-btn-con{
+        display: flex;
+        justify-content: space-around;
+        /* 아이콘 간격 조절 */
+        align-items: center;
+        /* 수직 중앙 정렬 */
+        margin-bottom:20px;
+    }
+    .btn-con {
+        background-color:#2ECC71;
+        color: #000000;
+        width:100px;
+        height:40px;
+        display: flex;
+        justify-content: space-around;
+        /* 아이콘 간격 조절 */
+        align-items: center;
+        /* 수직 중앙 정렬 */
+        border-radius: 10px;
+    }
+    .row {
+        width:80%;
+        margin-left:10%;
+    }
+    .card h3 {
+        margin:0px;
+    }
+    
+    .button-container {
+        display: flex;
+        justify-content:space-around; /* 버튼 간의 간격을 균일하게 배치 */
+        align-items: center; /* 버튼들을 수직 중앙 정렬 */
+         /* 부모 컨테이너의 외부 여백 */
+         
+    }
+    
+    .ill {
+        margin: -20px -15px 10px 5px; /* 각 버튼의 좌우 여백 */
+    }
+    
+    .ill img {
+        display: block; /* 이미지를 블록 요소로 만들어 중앙 정렬이 잘 되도록 함 */
+        width:50px;
+        height:50px;
+    }
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    
+    }
+    .logo img {
+        width: 100%;
+        height: auto;
+    }
+
+    .slide {
+        position: relative;
+        width: 100%; /* 슬라이드가 차지할 전체 너비 */
+        overflow: hidden; /* 넘치는 부분을 숨김 */
+    }
+    
+    .slide ul {
+        display: flex; /* 수평으로 배치 */
+        padding: 0;
+        margin: 0;
+        width: 300%; /* 슬라이드 이동을 고려한 너비 */
+        transition: transform 0.5s ease; /* 슬라이드 이동 애니메이션 */
+    }
+    
+    .slide ul li {
+        list-style: none;
+        width: 100%; /* 하나의 슬라이드가 전체 화면을 차지 */
+        flex: 0 0 100%; /* 하나의 슬라이드가 전체 너비를 차지 */
+    }
+    
+    .slide img {
+        {% comment %} max-height: 100px; /* 최대 너비를 420px로 설정 */ {% endcomment %}
+        top:20px;
+        width: 420px; /* 최대 너비 이내에서는 100%로 설정 */
+        height: auto; /* 높이는 자동으로 조정 */
+        display: block;
+        margin: 0 auto; /* 이미지가 가운데 정렬되도록 설정 */
+    }
+    
+    /* 슬라이드 내비게이션 버튼 스타일 */
+    .slide i.fas {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        color: rgb(46, 204, 113);
+        cursor: pointer;
+        z-index: 1000;
+    }
+    
+    .slide i.fa-angle-left {
+        left: 20px;
+    }
+    
+    .slide i.fa-angle-right {
+        right: 20px;
+    }
+    .add-post {
+        color: #000000;
+    }
+    .post_detail {
+        color: #000000;
+    }
+    .btn-con {
+        background-color: #2ECC71;
+        color: #000000;
+        width: 100px;
+        height: 40px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 10px;
+    }
+    .full-box {
+        display: flex;
+        width: 460px;
+        height: 40px;
+        background-color: #fffefc;
+        position: fixed;
+        bottom: 65px;
+        z-index: 999;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-con a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+    }
+    .board-btn-con {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .smallp {
+        font-size: 12px;
+        margin-bottom: 0;
+        margin-left: 10px;
+    }
+    p {
+        margin-bottom: 0;
+    }
+  
+    
+</style>
+
+
+<body>
+    <div style="height:80px;"></div>
+    <div style="padding:10px; text-align:center;">
+        <form method="post" action="{% url 'product_search' %}" class="form-inline d-inline-flex">
+            {% csrf_token %}
+            <input id="searchin" class="form-control mr-sm-2" type="search" aria-label="Search" name="q" value="{{q}}">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </form>
+    </div>
+
+    <main>
+        <article class="slide">
+            <ul>
+                <li><a href="{% url 'quick' %}"><img src="{% static 'slide1.gif' %}" alt="slide01"></a></li>
+                <li><a href="{% url 'board' %}"><img src="{% static 'slide2.gif' %}" alt="slide02"></a></li>
+            </ul>
+            <!-- 방향버튼 -->
+            <i class="fas fa-angle-left"></i>
+            <i class="fas fa-angle-right"></i>
+        </article>
+    </main>
+
+
+    <hr>
+        <div style="height: 55px; text-align: center;">
+<br>
+        <div class="button-container">
+        <div class="ill">
+            <a href="{% url 'products' 2 %}">
+                <img src="{% static 'dang.png' %}"></img>
+            </a>
+        </div>
+        <div class="ill">
+            <a href="{% url 'products' 3 %}">
+                <img src="{% static 'cinjang.png' %}"></img>
+            </a>
+        </div>
+        <div class="ill">
+            <a href="{% url 'products' 4 %}">
+                <img src="{% static 'cancer.png' %}"></img>
+            </a>
+        </div>
+    </div>
+    </div>
+    <hr>
+    <div class="main-btn-con">
+        <div class="btn-con">
+            <a href="{% url 'main' %}">
+                <b>ALL</b>
+            </a>
+        </div>
+        <div class="btn-con">
+            <a href="{% url 'show_life' %}">
+                <b>일상 공유</b>
+            </a>
+        </div>
+        <div class="btn-con">
+            <a href="{% url 'show_recipe' %}">
+                <b>레시피 공유</b>
+            </a>
+        </div> 
+    </div>
+
+    <div class="row" id="post-content" class="content" style="display: {% if posts %}block{% else %}none{% endif %};">
+        {% if not posts %}
+        <h2>작성된 글이 없습니다.</h2>
+        {% else %}
+        {% for post in posts %}
+            <div class="col-12" style="margin-bottom:12px;">
+                <div class="card">
+                    <a style="color:#000000;" href="{% url 'boardpost_detail' post.board_id %}">
+                        {% if post.cate == "일상 공유" %}
+                        <p class="smallp"><b>{{ post.cate }}</b><span style="font-size: 15px;">❤️</span></p>
+                        {% elif post.cate == "레시피 공유" %}
+                        <p class="smallp"><b>{{ post.cate }}</b><span style="font-size: 15px;">🍳</span></p>
+                        {% endif %}
+                        {% if post.file %}
+                        <div style="margin-left:10px;">
+                        <img src="{{ post.file.url }}" alt="이미지가 나와야하는 부분" style="width:auto%; height:200px;">
+                        </div>
+                        {% endif %}
+                        <p style="margin-left:10px;"><b>{{ post.title }}</b></p>
+                        <p class="smallp" style="font-size:10px;">{{ post.board_date|date:"Y-m-d" }}<b> [{{ post.user }}]</b></p>
+                        <p class="smallp">{{ post.content|truncatechars:100 }}</p>
+                    </a>
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+        {% endif %}
+        <div style="height:80px;"></div>
+</body>
+
+{% endblock %}

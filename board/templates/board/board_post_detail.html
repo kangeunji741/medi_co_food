@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .post_delete, .comments_delete {
+        color: #000000;
+    }
+    .userupimg{
+        text-align:center;
+    }
+    .smallp {
+        font-size:12px;
+        margin-bottom: 0;
+    }
+    .middp {
+        font-size:13px;
+
+    }
+    .danger {
+        text-align:right;
+        margin-right:30px;
+    }
+    .btn-con {
+        background-color:#2ECC71;
+        color: #000000;
+        width:100px;
+        height:40px;
+        display: flex;
+        justify-content: space-around;
+        /* 아이콘 간격 조절 */
+        align-items: center;
+        /* 수직 중앙 정렬 */
+        border-radius: 10px;
+    }
+    .btn-con a {
+        display: flex; /* 추가: 링크 안의 내용을 Flexbox로 처리 */
+        justify-content: center; /* 추가: 가로 중앙 정렬 */
+        align-items: center; /* 추가: 세로 중앙 정렬 */
+        width: 100%; /* 추가: 링크가 btn-con의 전체 너비를 차지하도록 설정 */
+        height: 100%; /* 추가: 링크가 btn-con의 전체 높이를 차지하도록 설정 */
+        text-decoration: none; /* 선택: 링크의 기본 밑줄 제거 */
+    }
+    .full-box {
+        display: flex;
+        width: 460px;
+        height: 40px;
+        background-color: #fffefc;
+        position: fixed;
+        bottom: 65px;
+        z-index: 999;
+        text-align: center;
+        align-items: center;
+        justify-content: center; /* 추가: 부모 요소의 내용을 가로로 중앙 정렬 */
+    }
+</style>
+<div style="height: 100px;"></div>
+{% if board.cate == "일상 공유" %}
+    <p class="smallp"><b>{{ board.cate }}</b><span style="font-size: 15px;">❤️</span></p>
+{% elif board.cate == "레시피 공유" %}
+    <p class="smallp"><b>{{ board.cate }}</b><span style="font-size: 15px;">🍳</span></p>
+{% endif %}
+<h4>{{ board.title }}</h4>
+<div class="danger">
+<p class="middp">{{ board.board_date|date:"Y-m-d" }} <b>{{ board.user }}</b></p>
+</div>
+<p>{{ board.content }}</p>
+{% if board.file %}
+<div class="userupimg">
+    <img src="{{ board.file.url }}" style="width:300px; heigth:auto">
+</div>
+{% endif %}
+<br>
+<div class="danger">
+{% if request.user == board.user %}
+    <a class="btn btn-danger" href="{% url 'post_delete' board.board_id %}">삭제하기</a>
+{% endif %}
+</div>
+<hr>
+<b>댓글 {{ comments.count }} </b>
+{% for comment in comments %}
+    <p>{{ comment.user }}: {{ comment.content }} 
+        <span style="font-size: 11px;"><i>{{ comment.comment_date|date:"m-d H:i" }}
+        {% if request.user == comment.user or request.user == board.user %}
+            <a class="comments_delete" href="{% url 'comments_delete' board.pk comment.pk %}">삭제</a>
+            
+        {% endif %}
+        <a class="comments_delete" href="#" onclick="showReplyForm({{ comment.pk }}); return false;">답댓글</a>
+        </i></span>
+    </p>
+    <div id="reply-form-{{ comment.pk }}" class="reply-form" style="display:none; margin-left: 20px;">
+        <form method="post" action="{% url 'reply_create' board.board_id comment.pk %}">
+            {% csrf_token %}
+            <p>{{ request.user }}</p>
+            <input type="text" name="reply" placeholder="답댓글">
+            <button type="submit">등록</button>
+        </form>
+    </div>
+    {% for reply in comment.replies.all %}
+        <div style="margin-left: 40px;">
+            <p>{{ reply.user }}: {{ reply.content }}
+                <span style="font-size: 11px;"><i>{{ reply.reply_date|date:"m-d H:i" }}
+                {% if request.user == reply.user or request.user == comment.board.user %}
+                    <a class="comments_delete" href="{% url 'reply_delete' board.board_id comment.pk reply.pk %}">삭제</a>
+                {% endif %}
+            </i></span>
+            </p>
+        </div>
+    {% endfor %}
+{% endfor %}
+<hr>
+
+<form method="post" action="{% url 'comments_create' board.board_id %}">
+    {% csrf_token %}
+    <div style="display: flex; align-items: center;justify-content:center;">
+        <img src="{{ extra_data.properties.profile_image }}" alt="프로필 이미지">
+        <p style="margin-right: 20px;">{{ request.user }}</p>
+        <input type="text" name="comment" placeholder="댓글" style="flex: 1; margin-right: 20px;">
+        <button type="submit">등록</button>
+    </div>
+    {% if error_message %}
+        <p style="color:red;">{{ error_message }}</p>
+    {% endif %}
+</form>
+
+<script>
+    function showReplyForm(commentId) {
+        var form = document.getElementById('reply-form-' + commentId);
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+</script>
+<div class="full-box">
+    <div class="btn-con">
+        <a href="{% url "board" %}">
+            <b>목록</b>
+        </a>
+    </div>
+</div>
+<div style="height: 120px;"></div>
+{% endblock %}

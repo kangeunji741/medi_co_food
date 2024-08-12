@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .btn-con {
+        background-color:#2ECC71;
+        color: #000000;
+        width:100px;
+        height:40px;
+        display: flex;
+        justify-content: space-around;
+        /* 아이콘 간격 조절 */
+        align-items: center;
+        /* 수직 중앙 정렬 */
+        border-radius: 10px;
+    }
+    .btn-con a {
+        display: flex; /* 추가: 링크 안의 내용을 Flexbox로 처리 */
+        justify-content: center; /* 추가: 가로 중앙 정렬 */
+        align-items: center; /* 추가: 세로 중앙 정렬 */
+        width: 100%; /* 추가: 링크가 btn-con의 전체 너비를 차지하도록 설정 */
+        height: 100%; /* 추가: 링크가 btn-con의 전체 높이를 차지하도록 설정 */
+        text-decoration: none; /* 선택: 링크의 기본 밑줄 제거 */
+    }
+    .full-box {
+        display: flex;
+        width: 460px;
+        height: 40px;
+        background-color: #fffefc;
+        position: fixed;
+        bottom: 65px;
+        z-index: 999;
+        text-align: center;
+        align-items: center;
+        justify-content: center; /* 추가: 부모 요소의 내용을 가로로 중앙 정렬 */
+    }
+
+    ul li {
+                    
+        display: inline;
+        font-size: 14px;
+        color: #77777A;
+        
+    }
+    
+    em {
+        color: #FC4C4E;
+        font-size: 18px; font-weight: bold;
+        margin-left: 4px;
+    }
+    
+    p {
+        color : #222225
+        font-size: 18px; font-weight: bold;
+    }
+
+</style>
+
+
+<body>
+
+    <div style="height:80px;"> 
+    </div>
+
+    <div style="padding:10px; text-align:center;">
+        <form method="post" action="{% url 'board_search' %}" class="form-inline d-inline-flex">
+            {% csrf_token %}
+            <input id="searchin" class="form-control mr-sm-2" type="search" aria-label="Search" name="q" value="{{q}}">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </form>
+    </div>
+
+    {% if board_search%}
+    <h4>검색하신 "{{ q }}"에 대한 결과 입니다.</h4>
+    {% for post in board_search %}
+
+    
+
+        <div class="col-12">
+            <div class="card">
+                <a style="color:#000000;"href="{% url 'boardpost_detail' post.board_id %}">
+                <h3>{{ post.title }}</h3>
+                 {% if post.file %}
+                    <p style="font-size:10px; text-align:right; margin-top:10px; margin-right:1vh;">{{ post.board_date|date:"Y-m-d" }}</p>
+                    <img src="" art="이미지가 나와야하는 부분" style="width:80% height:auto;">
+                {% else %}
+                
+                <!-- 첨부된 사진이 없다면 그냥 패스 하도록 함.-->
+                {% endif %}
+
+                <div class="col-8">
+                    <p style="display: flex; margin-right:1vh;">{{ post.content | truncatechars:100}}</p>
+
+                </div>
+                </a>
+            </div>
+        </div>
+        <hr>
+    {% endfor %}
+    {% else %}
+    <div class = "content">
+        <p>
+            <em >'{{q}}'</em>
+            에 대한 검색결과가 없습니다.
+        </p>
+        <ul>
+            <li>
+                -단어의 철자가 정확한지 확인해 보세요. <br>
+            </li>
+            <li>
+                -한글을 영어로 혹은 영어를 한글로 입력했는지 확인해 보세요. <br>
+            </li>
+            <li>
+                -검색어의 단어 수를 줄이거나, 일반적인 검색어로 다시 검색해 보세요. <br>
+            </li>
+            <li>
+                -두 단어 이상의 검색어인 경우, 띄어쓰기를 확인해 보세요. <br>
+            </li>
+            <li>
+                -검색 옵션을 변경해서 다시 검색해 보세요.
+            </li>
+        </ul>
+    </div>
+    {% endif %}
+    <div class="full-box">
+        <div class="btn-con">
+            <a href="{% url "board" %}">
+                <b>목록</b>
+            </a>
+        </div>
+    </div>
+</body>
+
+{% endblock %}

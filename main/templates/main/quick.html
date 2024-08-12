@@ -1,0 +1,296 @@
+{% extends 'base.html' %} 
+{% block content %}
+<style>
+  .list-group-item {
+    display: inline-block;
+    width: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: black;
+  }
+  .flavor-image {
+    width: 100px;
+    height: 100px;
+    margin: 5px;
+  }
+
+  img-fluid-mb-4 {
+    margin-bottom: 0;
+  }
+  #element2_list {
+    margin-bottom: 0;
+  }
+
+  div#q4-container.container.mt-5 {
+    margin: 0; /* 마진을 완전히 제거 */
+}
+
+div#q5-container.container.mt-4 {
+    margin: 0; /* 마진을 완전히 제거 */
+}
+
+.img-fluid.mb-4 {
+    margin-bottom: 0; /* 이미지의 마진 제거 */
+}
+.img-fluid.mb-5 {
+  margin-bottom: 0; /* 이미지의 마진 제거 */
+}
+
+.flavor-image {
+  width:200px;
+  height:200px;
+}
+</style>
+
+<div style="height: 80px"></div>
+
+<div class="container mt-5 text-center">
+  <img src="/static/quicklogo.png" alt="Header Image" class="img-fluid mb-4" style="width: 70%; height: auto;">
+</div>
+
+
+<div class="container mt-5">
+  <img id="image" src="/static/quick1.png" alt="Header Image" class="img-fluid mb-4" style="width: 80%; height: auto; display: none;">
+  <img id="image1" src="/static/quick2.png" alt="Header Image" class="img-fluid mb-4" style="width: 80%; height: auto; display: none;">
+</div>
+
+<div class="container mt-5 position-relative" style="width: 100%; height: auto; display: none;  margin: 0; " id="overlay-content">
+  <img id="image2" src="/static/quick3.png" alt="Header Image" class="img-fluid mb-3" style="width: 80%; height: auto;  margin: 0; display: none;">
+    <div class="list-group mt-3" id="disease_names">
+      {% for disease_name in disease_names %}
+      <a
+        href="#"
+        class="list-group-item list-group-item-action"
+        onclick="loadElement1List('{{ disease_name }}')"
+        >{{ disease_name }}</a
+      >
+      {% endfor %}
+    </div>
+  </div>
+
+
+  <div class="container mt-3 position-relative" style="width: 100%; height: auto; display: none;  margin: 0; " id="q4-container">
+    <img src="/static/quick4.png" alt="Header Image" class="img-fluid mb-1" style="width: 80%; height: auto; margin-bottom:0px;">
+    <div id="element1-content" class="list-group mt-1" style="display: none;">
+      <div class="list-group mt-3" id="element1_list">
+        <!-- element1이 선택되면 이 부분이 자동으로 채워집니다 -->
+      </div>
+    </div>
+  </div>
+
+   
+<div class="container mt-3 position-relative" style="width: 100%; height: auto; display: none;" id="q5-container">
+  <img src="/static/quick5.png" alt="Header Image" class="img-fluid mb-1" style="width: 80%; height:auto; margin-bottom: 0;">
+<div id="element2-content" class="list-group mt-1" style="display: none">
+  <div class="list-group mt-3" id="element2_list">
+    <!-- element1이 선택되면 이 부분이 자동으로 채워집니다 -->
+  </div>
+</div>
+</div>
+
+
+<div id="photo-content" class="list-group mt-5 text-center" style="display: none" >
+  <img src="/static/quickresult1.png" alt="Header Image" class="img-fluid mb-1 text-center" style="width: 70%; height:auto;">
+  <div id="image_urls" class="mt-3">
+      <!-- 선택한 요소에 대한 사진이 여기에 추가됩니다 -->
+  </div>
+</div>
+
+
+
+
+  <div class="container mt-5 position-relative" style="width: 100%; height: auto;" padding-bottom: "500px;">
+    <div class="overlay-content position-absolute top-50 start-50 translate-middle" style="display: none;">
+      <div class="list-group mt-3" id="disease_names">
+        {% for disease_name in disease_names %}
+        <a href="#" class="list-group-item list-group-item-action" onclick="loadElement1List('{{ disease_name }}')">{{ disease_name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div style="height: 20px;"></div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+var image = document.getElementById('image');
+var image1 = document.getElementById('image1');
+var image2 = document.getElementById('image2');
+
+// 1초 후에 이미지1을 보이게 설정합니다.
+setTimeout(function() {
+  image.style.display = 'block';
+}, 1000);
+
+// 2초 후에 이미지2를 보이게 설정합니다.
+setTimeout(function() {
+  image1.style.display = 'block';
+}, 2000);
+
+// 3초 후에 이미지3를 보이게 설정합니다.
+setTimeout(function() {
+  image2.style.display = 'block';
+}, 3000);
+
+setTimeout(function() {
+  document.getElementById('overlay-content').style.display = 'block';
+}, 4000); // 4000 밀리초 = 4초
+
+document.getElementById('overlay-content').addEventListener('click', function(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  document.getElementById('q4-container').style.display = 'block';
+  document.getElementById('q4-container').scrollIntoView({ behavior: 'smooth' });
+});
+
+document.getElementById('q4-container').addEventListener('click', function(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  document.getElementById('q5-container').style.display = 'block';
+  document.getElementById('q5-container').scrollIntoView({ behavior: 'smooth' });
+});
+
+document.getElementById('q5-container').addEventListener('click', function(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  document.getElementById('photo-content').style.display = 'block';
+  document.getElementById('photo-content').scrollIntoView({ behavior: 'smooth' });
+});
+
+function loadElement1List(disease_name) {
+  $.ajax({
+      url: '{% url "get_element1" %}',
+      method: 'POST',
+      data: { 'disease_name': disease_name },
+      success: function(data) {
+          var element1List = $('#element1_list');
+          element1List.empty();
+          $.each(data, function(index, element1) {
+              var element1Item = $('<a href="#" class="list-group-item list-group-item-action">' + element1 + '</a>');
+              element1Item.on('click', function() {
+                  loadElement2List(disease_name, element1);
+              });
+              element1List.append(element1Item);
+          });
+          $('#element1-content').show();
+          $('#element2-content').hide();
+          $('#photo-content').hide();
+      },
+      error: function(xhr, status, error) {
+          console.error('AJAX request to /get_element1/ failed:', status, error);
+      }
+  });
+}
+
+function loadElement2List(disease_name, element1) {
+  $.ajax({
+      url: '{% url "get_element2" %}',
+      method: 'POST',
+      data: { 'element1': element1 },
+      success: function(data) {
+          var element2List = $('#element2_list');
+          element2List.empty();
+          $.each(data, function(index, element2) {
+              var element2Item = $('<a href="#" class="list-group-item list-group-item-action">' + element2 + '</a>');
+              element2Item.on('click', function() {
+                  get_photos(disease_name, element1, element2);
+              });
+              element2List.append(element2Item);
+          });
+          $('#element2-content').show();
+          $('#photo-content').hide();
+      },
+      error: function(xhr, status, error) {
+          console.error('AJAX request to /get_element2/ failed:', status, error);
+      }
+  });
+}
+
+function get_photos(disease_name, element1, element2) {
+  $.ajax({
+      url: '{% url "get_photos" %}',
+      method: 'POST',
+      data: {
+          'disease_name': disease_name,
+          'element1': element1,
+          'element2': element2
+      },
+      success: function(data) {
+        console.log('이미지 URL:', data); // 이미지 URL 콘솔에 출력
+    
+        // 이미지 URL을 화면에 표시
+        var photoUrlContainer = $('#image_urls');
+        photoUrlContainer.empty();
+        $.each(data, function(index, item) {
+            var url = item.photoUrl;
+            var name = item.productName;
+            var id = item.productId;
+            
+            // 피규어 요소 생성
+            var figureElement = $('<figure>');
+    
+            // 링크 생성
+            var linkElement = $('<a>').attr('href', '../product_detail/' + id);
+            
+            // 이미지 요소 생성
+            var imgElement = $('<img>').attr({
+                'src': url,
+                'class': 'flavor-image'
+            });
+            
+            // 캡션 요소 생성
+            var captionElement = $('<figcaption>').text(name);
+            
+            // 이미지 요소를 링크에 추가
+            linkElement.append(imgElement);
+            
+            // 링크를 피규어에 추가
+            figureElement.append(linkElement);
+            
+            // 캡션을 피규어에 추가
+            figureElement.append(captionElement);
+            
+            // 피규어를 컨테이너에 추가
+            photoUrlContainer.append(figureElement);
+        });
+        $('#photo-content').show();
+    },
+      error: function(xhr, status, error) {
+          console.error('AJAX request to /get_photos/ failed:', status, error);
+      }
+  });
+}
+
+
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+$.ajaxSetup({
+  beforeSend: function(xhr, settings) {
+      if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
+  }
+});
+
+
+</script>
+
+
+{% endblock %}

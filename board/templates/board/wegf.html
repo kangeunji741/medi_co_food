@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .post_delete, .comments_delete{
+        color: #000000;
+    }
+</style>
+<div style="height: 80px;"></div>
+<h4>{{ board.title }}</h4>
+<h4>{{ board.cate }}</h4>
+<p>{{ board.board_date|date:"Y-m-d" }} 작성자: {{ board.user }}</p>
+<p>{{ board.content }}</p>
+
+{% if request.user == board.user %}
+    <button class="btn-bt">수정하기</button>
+    <a class="post_delete" href="{% url 'post_delete' board.board_id %}">
+        삭제하기
+    </a>
+{% endif %}
+<hr>
+<h4>댓글 {{ comments.count }} </h4>
+{% for comment in comments %}
+    <p>{{ comment.user }}: {{ comment.content }} ({{ comment.comment_date|date:"Y-m-d H:i" }}) 
+        {% if request.user == comment.user or request.user == board.user %}
+            <a class="comments_delete" href="{% url 'comments_delete' board.pk comment.pk %}">삭제</a>
+            <a class="comments_delete" href="#">답댓글</a>
+        {% endif %}
+    </p>
+{% endfor %}
+<hr>
+
+<h4>댓글 입력 창</h4>
+<form method="post" action="{% url 'comments_create' board.board_id %}">
+    {% csrf_token %}
+    <p>{{ request.user }}</p>
+    <input type="text" name="comment" placeholder="댓글">
+    <button type="submit">등록</button>
+    {% if error_message %}
+        <p style="color:red;">{{ error_message }}</p>
+    {% endif %}
+</form>
+{% endblock %}

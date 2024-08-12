@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+<style>
+    .add-post {
+        color: #000000;
+    }
+    .post_detail {
+        color: #000000;
+    }
+    .btn-con {
+        background-color: #2ECC71;
+        color: #000000;
+        width: 100px;
+        height: 40px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 10px;
+    }
+    .full-box {
+        display: flex;
+        width: 460px;
+        height: 40px;
+        background-color: #fffefc;
+        position: fixed;
+        bottom: 65px;
+        z-index: 999;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-con a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+    }
+    .board-btn-con {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .smallp {
+        font-size: 12px;
+        margin-bottom: 0;
+        margin-left: 10px;
+    }
+    p {
+        margin-bottom: 0;
+    }
+</style>
+</head>
+<div style="height: 80px;"></div>
+
+<div style="padding: 10px; text-align: center;">
+    <form method="post" action="{% url 'board_search' %}" class="form-inline d-inline-flex">
+        {% csrf_token %}
+        <input id="searchin" class="form-control mr-sm-2" type="search" aria-label="Search" name="q" value="{{q}}">
+        <button type="submit" class="btn btn-primary">검색</button>
+    </form>
+</div>
+
+<div class="board-btn-con">
+    <div class="btn-con">
+        <a href="{% url 'board' %}">
+            <b>ALL</b>
+        </a>
+    </div>
+    <div class="btn-con">
+        <a href="{% url 'board_show_life' %}">
+            <b>일상 공유</b>
+        </a>
+    </div>
+    <div class="btn-con">
+        <a href="{% url 'board_show_recipe' %}">
+            <b>레시피 공유</b>
+        </a>
+    </div>
+</div>
+
+<body>
+    {% if not boards %}
+    <h2>작성된 글이 없습니다.</h2>
+    {% else %}
+    {% for board in boards %}
+        <div class="col-12">
+            <div class="card">
+                <a style="color:#000000;" href="{% url 'boardpost_detail' board.board_id %}">
+                    {% if board.cate == "일상 공유" %}
+                    <p class="smallp"><b>{{ board.cate }}</b><span style="font-size: 15px;">❤️</span></p>
+                    {% elif board.cate == "레시피 공유" %}
+                    <p class="smallp"><b>{{ board.cate }}</b><span style="font-size: 15px;">🍳</span></p>
+                    {% endif %}
+                    {% if board.file %}
+                    <div style="margin-left:10px;">
+                    <img src="{{ board.file.url }}" alt="이미지가 나와야하는 부분" style="width:auto%; height:200px;">
+                    </div>
+                    {% endif %}
+                    <p style="margin-left:10px;"><b>{{ board.title }}</b></p>
+                    <p class="smallp" style="font-size:10px;">{{ board.board_date|date:"Y-m-d" }}<b> [{{ board.user }}]</b></p>
+                    <p class="smallp">{{ board.content|truncatechars:100 }}</p>
+                </a>
+            </div>
+        </div>
+        <hr>
+    {% endfor %}
+    {% endif %}
+    <div class="full-box">
+        <div class="btn-con">
+            <a href="{% url 'boardpost' %}">
+                <b>글 작성하기</b>
+            </a>
+        </div>
+    </div>
+    <div style="height: 80px;"></div>
+{% endblock %}

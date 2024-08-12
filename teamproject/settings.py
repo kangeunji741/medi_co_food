@@ -108,27 +108,11 @@ WSGI_APPLICATION = "teamproject.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        "NAME": "seocho_SW_DB_p2_1",
-        "USER": "seocho_SW_DB_p2_1",
-        "PASSWORD": "smhrd1",
-        "HOST": "project-db-campus.smhrd.com",
-        "PORT": "3312",
+
     }
 }
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         "NAME": "medicofood",
-#         "USER": "medicofood",
-#         "PASSWORD": "1234",
-#         "HOST": "127.0.0.1",
-#         "PORT": "3306",
-#     }
-# }
 
 
 # Password validation
